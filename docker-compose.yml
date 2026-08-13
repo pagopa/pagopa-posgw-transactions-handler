@@ -1,0 +1,16 @@
+services:
+  pagopa-posgw-transactions-handler:
+    container_name: pagopa-posgw-transactions-handler
+    build:
+      dockerfile: "${DOCKER_FILE_NAME}"
+      context: .
+    ports:
+      - "8080:8080"
+    networks:
+      - pagopa-posgw-net
+    env_file: .env
+
+networks:
+  pagopa-posgw-net:
+    name: pagopa-posgw-net
+    driver: bridge

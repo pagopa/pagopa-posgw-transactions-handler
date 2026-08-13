@@ -50,3 +50,20 @@ kotlin {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+graalvmNative {
+    binaries {
+        named("main") {
+            // Grant native access to suppress Java 22+ restricted method warnings
+            // triggered when underlying frameworks (e.g., Reactor Netty) load C native libraries via JNI
+            buildArgs.add("--enable-native-access=ALL-UNNAMED")
+        }
+    }
+}
+
+
+/**
+ * Task used to expand application properties with build specific properties such as artifact name
+ * and version
+ */
+tasks.processResources { filesMatching("application.properties") { expand(project.properties) } }
