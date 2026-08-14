@@ -54,6 +54,18 @@ $ docker compose up --build
 $ (set -a; source .env.local; set +a && ./gradlew bootRun)
 ```
 
+### Code formatting
+
+Code formatting checks are automatically performed during build phase.
+If the code is not well formatted an error is raised blocking the gradle build.
+
+Helpful commands:
+
+```sh
+$ ./gradlew spotlessCheck # --> used to perform format checks
+$ ./gradlew spotlessApply # --> used to format all misformatted files
+```
+
 ### Testing 🧪
 
 #### Unit testing
