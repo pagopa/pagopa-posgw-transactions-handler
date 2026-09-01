@@ -1,0 +1,10 @@
+apiVersion: v2
+name: pagopa-posgw-transactions-handler
+description: PagoPA microservice that handles transactions' lifecycle and workflow for pos-gateway domain
+type: application
+version: 0.0.1
+appVersion: 0.0.1
+dependencies:
+  - name: microservice-chart
+    version: 8.6.0
+    repository: "https://pagopa.github.io/aks-microservice-chart-blueprint"
