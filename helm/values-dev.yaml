@@ -3,7 +3,7 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: "pagopa-posgw-transactions-handler"
   image:
-    repository: pagopadcommonacr.azurecr.io/pagopaposgwtransactionshandler
+    repository: pagopaditncoreacr.azurecr.io/pagopaposgwtransactionshandler
     tag: "0.0.1"
     pullPolicy: Always
   livenessProbe:
