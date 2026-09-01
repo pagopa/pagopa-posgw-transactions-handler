@@ -1,4 +1,4 @@
-package it.pagopa.pagopa_posgw_transactions_handler
+package it.pagopa.posgw.transactions.handler
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

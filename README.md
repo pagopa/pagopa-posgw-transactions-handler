@@ -1,6 +1,10 @@
 # pagopa-posgw-transactions-handler
 PagoPA microservice that handles transactions' lifecycle and workflow for pos-gateway domain
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-posgw-transactions-handler&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-posgw-transactions-handler)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-posgw-transactions-handler&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-posgw-transactions-handler)
+
+
 ---
 
 ## Api Documentation 📖
@@ -32,11 +36,21 @@ If you want to start the application without too much hassle, you can just copy 
 cp .env.example .env
 ```
 
-### Run docker container
-
-```shell
-$ docker compose up --build
+### Build Docker Image
+```sh
+docker build -t pagopa-posgw-transactions-handler .
 ```
+
+### Run with Docker Compose
+Check that the .env file exists and is populated with the correct values (see [Populate the environment](#populate-the-environment)).
+
+
+Then start [posgw-local](https://github.com/pagopa/pagopa-posgw-local) project with:
+
+```sh
+docker compose up --scale pagopa-posgw-transactions-handler=0
+```
+This way you can use the locally build service version with posgw local project, otherwise see posgw local project README to start all services using docker builds
 
 ---
 

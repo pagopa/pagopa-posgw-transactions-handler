@@ -1,4 +1,4 @@
-package it.pagopa.pagopa_posgw_transactions_handler
+package it.pagopa.posgw.transactions.handler
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
