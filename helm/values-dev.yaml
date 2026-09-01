@@ -81,10 +81,11 @@ microservice-chart:
     OTEL_METRICS_EXPORTER: otlp
     OTEL_LOGS_EXPORTER: otlp
     OTEL_TRACES_SAMPLER: "always_on"
-#  envSecret:
-#  keyvault:
-#    name: "pagopa-d-itn-posgw-kv"
-#    tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
+  envSecret:
+    TEST: test1
+  keyvault:
+    name: "pagopa-d-itn-posgw-kv"
+    tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
   nodeSelector: {}
   tolerations: []
   affinity:
