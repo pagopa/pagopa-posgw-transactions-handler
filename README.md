@@ -100,8 +100,8 @@ TODO
 
 For support reproducible build this project has the following gradle feature enabled:
 
-- [dependency lock](https://docs.gradle.org/8.1/userguide/dependency_locking.html)
-- [dependency verification](https://docs.gradle.org/8.1/userguide/dependency_verification.html)
+- [dependency lock](https://docs.gradle.org/9.5.1/userguide/dependency_locking.html)
+- [dependency verification](https://docs.gradle.org/9.5.1/userguide/dependency_verification.html)
 
 #### Dependency lock
 
@@ -204,7 +204,7 @@ Finally, you can add new dependencies both to gradle.lockfile writing verificati
 ```
 
 For more information read the
-following [article](https://docs.gradle.org/8.1/userguide/dependency_verification.html#sec:checksum-verification)
+following [article](https://docs.gradle.org/9.5.1/userguide/dependency_verification.html#sec:checksum-verification)
 
 ## Contributors 👥
 
