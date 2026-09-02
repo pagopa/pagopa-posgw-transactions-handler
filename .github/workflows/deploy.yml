@@ -34,22 +34,29 @@ jobs:
         shell: bash
       - name: Azure Pipelines Action
         run: |
-          curl -X POST \
-            -u ":${{ secrets.AZURE_DEVOPS_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-                  "resources": {
-                    "repositories": {
-                      "self": {
-                        "refName": "${{ github.ref }}"
-                      }
-                    }
-                  },
-                  "templateParameters": {
-                    "DEV_DEPLOY": "${{ steps.configure_pipeline_parameters.outputs.DEV_DEPLOY }}",
-                    "SKIP_BUILD": "${{ steps.configure_pipeline_parameters.outputs.SKIP_BUILD }}",
-                    "FORCE_REPLACE_DOCKER_IMAGE": "${{ steps.configure_pipeline_parameters.outputs.FORCE_REPLACE_DOCKER_IMAGE }}",
-                    "UAT_PROD_DEPLOY": "${{ steps.configure_pipeline_parameters.outputs.UAT_PROD_DEPLOY }}"
-                  }
-                }' \
-            "https://dev.azure.com/pagopaspa/pagoPA-projects/_apis/pipelines/1813/runs?api-version=7.0"
+         HTTP_CODE=$(curl -X POST \
+             -u ":${{ secrets.AZURE_DEVOPS_TOKEN }}" \
+             -H "Content-Type: application/json" \
+             -d '{
+                   "resources": {
+                     "repositories": {
+                       "self": {
+                         "refName": "${{ github.ref }}"
+                       }
+                     }
+                   },
+                   "templateParameters": {
+                     "DEV_DEPLOY": "${{ steps.configure_pipeline_parameters.outputs.DEV_DEPLOY }}",
+                     "SKIP_BUILD": "${{ steps.configure_pipeline_parameters.outputs.SKIP_BUILD }}",
+                     "FORCE_REPLACE_DOCKER_IMAGE": "${{ steps.configure_pipeline_parameters.outputs.FORCE_REPLACE_DOCKER_IMAGE }}",
+                     "UAT_PROD_DEPLOY": "${{ steps.configure_pipeline_parameters.outputs.UAT_PROD_DEPLOY }}"
+                   }
+                 }' \
+             -s -o response.json -w "%{http_code}" \
+             "https://dev.azure.com/pagopaspa/pagoPA-projects/_apis/pipelines/2616/runs?api-version=7.0")
+             echo "HTTP status: $HTTP_CODE"
+             cat response.json
+             if [ "$HTTP_CODE" -ne 200 ]; then
+             echo "::error::Error triggering azure pipeline (HTTP $HTTP_CODE)"
+             exit 1
+             fi
