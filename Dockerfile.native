@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/native-image-community:25 AS builder
+FROM ghcr.io/graalvm/native-image-community:25@sha256:0d936f32bb8acb5bc60c41b33e05f064d7a6aaf36b726538296c54949bd4a3c0 AS builder
 WORKDIR /workspace/app
 
 RUN microdnf install -y findutils
@@ -14,7 +14,7 @@ COPY src src
 RUN chmod +x ./gradlew
 RUN ./gradlew :nativeCompile
 
-FROM debian:stable-20240701-slim
+FROM debian:stable-20240701-slim@sha256:f8bbfa052db81e5b8ac12e4a1d8310a85d1509d4d0d5579148059c0e8b717d4e
 WORKDIR /app/
 
 EXPOSE 8080
