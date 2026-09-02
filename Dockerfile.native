@@ -1,10 +1,12 @@
-FROM ghcr.io/graalvm/native-image-community:25 AS builder
+# version 25
+FROM ghcr.io/graalvm/native-image-community@sha256:3c53c5900ce3c39b1293a0d0f3417d04d4b4f07752fd083c322bf9f37ed8de0a AS builder
 WORKDIR /workspace/app
 
 RUN microdnf install -y findutils
 
 COPY gradlew .
 COPY gradle gradle
+COPY gradle.lockfile .
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
 COPY eclipse-style.xml eclipse-style.xml
@@ -14,7 +16,12 @@ COPY src src
 RUN chmod +x ./gradlew
 RUN ./gradlew :nativeCompile
 
-FROM debian:stable-20240701-slim
+# version :stable-20240701-slim
+FROM debian@sha256:f8bbfa052db81e5b8ac12e4a1d8310a85d1509d4d0d5579148059c0e8b717d4e
+
+RUN addgroup --system user && adduser --ingroup user --system user
+USER user:user
+
 WORKDIR /app/
 
 EXPOSE 8080
