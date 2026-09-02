@@ -34,7 +34,7 @@ jobs:
         shell: bash
       - name: Azure Pipelines Action
         run: |
-         HTTP_CODE=$(curl -X POST \
+          HTTP_STATUS=$(curl -s -o /tmp/pipeline_response.json -w "%{http_code}" -X POST \
              -u ":${{ secrets.AZURE_DEVOPS_TOKEN }}" \
              -H "Content-Type: application/json" \
              -d '{
@@ -54,9 +54,11 @@ jobs:
                  }' \
              -s -o response.json -w "%{http_code}" \
              "https://dev.azure.com/pagopaspa/pagoPA-projects/_apis/pipelines/2616/runs?api-version=7.0")
-             echo "HTTP status: $HTTP_CODE"
-             cat response.json
-             if [ "$HTTP_CODE" -ne 200 ]; then
-             echo "::error::Error triggering azure pipeline (HTTP $HTTP_CODE)"
-             exit 1
-             fi
+             echo "📄 Response body:"
+          cat /tmp/pipeline_response.json
+          echo ""
+          echo "📡 HTTP status code: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "::error::Failed to trigger Azure DevOps pipeline (HTTP status: $HTTP_STATUS)"
+            exit 1
+          fi
