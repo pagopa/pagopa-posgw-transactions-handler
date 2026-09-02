@@ -7,11 +7,14 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("org.graalvm.buildtools.native") version "1.1.1"
   id("com.diffplug.spotless") version "8.9.0"
+  id("com.dipien.semantic-version") version "2.0.0" apply false
 }
 
 group = "it.pagopa"
 
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
+
+apply(plugin = "com.dipien.semantic-version")
 
 java {
   toolchain {
@@ -109,3 +112,8 @@ graalvmNative {
  * and version
  */
 tasks.processResources { filesMatching("application.properties") { expand(project.properties) } }
+
+/** Semantic versioning plugin configuration */
+tasks.named("incrementVersion") {
+  dependsOn("prepareKotlinBuildScriptModel")
+}
