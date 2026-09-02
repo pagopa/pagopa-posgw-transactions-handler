@@ -1,4 +1,4 @@
-# pagopa-posgw-transactions-handler
+# pagopa-posgw-transactions-hander
 PagoPA microservice that handles transactions' lifecycle and workflow for pos-gateway domain
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-posgw-transactions-handler&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-posgw-transactions-handler)
