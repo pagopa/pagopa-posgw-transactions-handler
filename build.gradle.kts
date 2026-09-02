@@ -54,6 +54,9 @@ kotlin {
   }
 }
 
+// Dependency locking - lock all dependencies
+dependencyLocking { lockAllConfigurations() }
+
 spotless {
   kotlin {
     target("**/*.kt")
