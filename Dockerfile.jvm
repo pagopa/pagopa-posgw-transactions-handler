@@ -1,8 +1,10 @@
-FROM amazoncorretto:25-alpine AS build
+# version 25-alpine
+FROM amazoncorretto@sha256:2ad5f5cf03a3970f2478b130dc28f51b179ce13c58154fe3ec1a6fdeb3b86e3a AS build
 WORKDIR /workspace/app
 
 COPY gradlew .
 COPY gradle gradle
+COPY gradle.lockfile .
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
 COPY eclipse-style.xml eclipse-style.xml
@@ -16,7 +18,8 @@ RUN rm build/libs/*-plain.jar
 RUN cp build/libs/*.jar application.jar
 RUN mkdir build/extracted && java -Djarmode=tools -jar application.jar extract --layers --destination build/extracted
 
-FROM amazoncorretto:25-alpine
+# version 25-alpine
+FROM amazoncorretto@sha256:2ad5f5cf03a3970f2478b130dc28f51b179ce13c58154fe3ec1a6fdeb3b86e3a
 
 RUN addgroup --system user && adduser --ingroup user --system user
 USER user:user
