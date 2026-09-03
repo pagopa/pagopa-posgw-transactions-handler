@@ -314,18 +314,9 @@ components:
         details:
           $ref: '#/components/schemas/AuthorizationCallbackDetails'
     AuthorizationCallbackDetails:
-      type: object
       oneOf:
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
-      discriminator:
-        propertyName: outcome
-        mapping:
-          AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
-          DECLINED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          REFUSED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          CANCELED_BY_USER: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          TIMEOUT: '#/components/schemas/AuthorizationCallbackDetailsKo'
     AuthorizationCallbackDetailsOk:
       type: object
       description: Authorization outcome OK details
@@ -338,13 +329,7 @@ components:
           enum:
             - CARD
         details:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
-      discriminator:
-        propertyName: paymentType
-        mapping:
-          CARD: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
+          $ref: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
     AuthorizationCallbackCardDetailsOk:
       type: object
       description: Authorization outcome OK details
@@ -367,6 +352,7 @@ components:
           $ref: '#/components/schemas/CardBrand'
     AuthorizationCallbackDetailsKo:
       type: object
+      description: Authorization outcome KO details
       required:
         - errorDescription
       properties:
