@@ -28,9 +28,18 @@ repositories {
 
 object Deps {
   const val ECS_LOGGING_VERSION = "1.8.0"
+  const val OTEL_INSTRUMENTATION_VERSION = "2.28.0"
 }
 
 dependencies {
+  // Open telemetry instrumentation
+  implementation(
+    platform(
+      "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${Deps.OTEL_INSTRUMENTATION_VERSION}"
+    )
+  )
+  implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
+
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
