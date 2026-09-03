@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-posgw-transactions-handler
 description: PagoPA microservice that handles transactions' lifecycle and workflow for pos-gateway domain
 type: application
-version: 0.0.4
-appVersion: 0.0.4
+version: 0.0.5
+appVersion: 0.0.5
 dependencies:
   - name: microservice-chart
     version: 8.6.0
