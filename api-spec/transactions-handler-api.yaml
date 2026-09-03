@@ -1,0 +1,461 @@
+openapi: 3.1.0
+info:
+  title: Pagopa POS gateway services for POS integration
+  description: API's that will be used for pagoPA POS flow integration
+  contact:
+    name: pagoPA - Touchpoints team
+  version: 1.0.0
+servers:
+  - url: 'https://{host}/pos-layer-service'
+    variables:
+      host:
+        description: The hostname of the API server
+        default: api.platform.pagopa.it
+        enum:
+          - api.platform.pagopa.it
+          - api.dev.platform.pagopa.it
+          - api.uat.platform.pagopa.it
+tags:
+  - name: pagopa-internal
+    description: >-
+      APIs that will be implemented/exposed by pagoPA internal services to
+      handle payment position creation, payment and reporting
+externalDocs:
+  url: >-
+    https://pagopa.atlassian.net/wiki/spaces/I/pages/2813689945/DR+PFM-1+-+Vista+Dinamica+delle+Componenti
+  description: Design review
+security:
+  - PagopaInternalApiKeyAuth: []
+paths:
+  /transactions:
+    post:
+      tags:
+        - pagopa-internal
+      summary: Create a new pagoPA payment notice transaction
+      security:
+        - PagopaInternalApiKeyAuth: []
+      description: >-
+        Activate a transaction getting all info from Nodo. Return and identifier
+        of the transaction.
+      operationId: newTransaction
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivatePaymentRequest'
+      responses:
+        '200':
+          description: Payment activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivatePaymentResponse'
+        '400':
+          description: Formally invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+  /transactions/{transactionId}/authorizations/outcomes:
+    post:
+      tags:
+        - pagopa-internal
+      summary: Notify authorization outcome to pagoPA layer (eCommerce)
+      security:
+        - PagopaInternalApiKeyAuth: []
+      description: >-
+        Return to eCommerce authorization outcome
+      operationId: notifyAuthorizationOutcome
+      parameters:
+        - $ref: '#/components/parameters/TransactionIdPath'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationCallbackRequest'
+      responses:
+        '204':
+          description: Outcome notified successfully
+        '400':
+          description: Formally invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '502':
+          description: Bad gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+components:
+  parameters:
+    CorrelationId:
+      name: x-correlation-id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: >-
+        Subsequent api call correlation field. This should be the same for all
+        api's invoked in a given user session to track each call and for
+        troubleshooting
+    TransactionIdPath:
+      name: transactionId
+      in: path
+      required: true
+      description: The unique transaction identifier
+      schema:
+        $ref: '#/components/schemas/TransactionId'
+    SessionIdPath:
+      name: sessionId
+      in: path
+      required: true
+      description: The unique session identifier
+      schema:
+        $ref: '#/components/schemas/SessionId'
+  schemas:
+    Amount:
+      minimum: 1
+      type: integer
+      description: Amount expressed in eurocents
+      format: int64
+    TerminalId:
+      type: string
+      description: the POS unique terminal identifier
+    TransactionId:
+      type: string
+      format: uuid
+      description: unique identifier of the pagoPA eCommerce payment transaction
+    SessionId:
+      type: string
+      description: unique identifier of the pagoPA POS gateway payment session
+      format: uuid
+    RRN:
+      type: string
+      examples:
+        - '123456789012'
+      description: Retrieval Reference Number -> payment unique identifier
+    Bin:
+      type: string
+      examples:
+        - "400000"
+      minLength: 6
+      maxLength: 8
+      description: debit/credit card bin number, used to print receipts
+    LastFourDigits:
+      type: string
+      examples:
+        - "1234"
+      minLength: 4
+      maxLength: 4
+      description: debit/credit card last four digits number, used to print receipts
+    PaymentAuthCode:
+      type: string
+      examples:
+        - '889900'
+      description: payment authorization code. PSP side identifier that can be used to track back to POS authorization process
+    AuthorizationOutcome:
+      type: string
+      enum:
+        - AUTHORIZED
+        - DECLINED
+        - REFUSED
+        - CANCELED_BY_USER
+        - TIMEOUT
+      examples:
+        - AUTHORIZED
+      description: authorization outcome
+    CardBrand:
+      type: string
+      enum:
+        - VISA
+        - MASTERCARD
+        - DINERS
+        - AMEX
+        - MAESTRO
+      description: the brand of the citized debit/credit card
+    RptId:
+      type: string
+      examples:
+        - "80001230456302000100000012345"
+      description: 'uniquely identify a payment notice. valued as <creditorInstitutionFiscalCode><noticeNumber>'
+    PaymentToken:
+      type: string
+      examples:
+        - '99887766554433221100'
+    ActivatePaymentInfo:
+      type: object
+      required:
+        - rptId
+        - paymentToken
+        - outcome
+        - amount
+      properties:
+        rptId:
+          $ref: '#/components/schemas/RptId'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        outcome:
+          type: string
+          enum:
+            - OK
+            - KO
+      allOf:
+        - anyOf:
+            - properties:
+                outcome:
+                  enum: [OK]
+                paymentToken:
+                  $ref: '#/components/schemas/PaymentToken'
+            - properties:
+                outcome:
+                  enum: [KO]
+                reason:
+                  type: string
+                  description: "Activation error reason"
+    AuthorizationCallbackRequest:
+      type: object
+      required:
+        - outcome
+        - terminalId
+        - timestamp
+        - amount
+        - details
+      properties:
+        outcome:
+          $ref: '#/components/schemas/AuthorizationOutcome'
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+        timestamp:
+          type: string
+          format: date-time
+          examples:
+            - '2026-04-08T14:16:30Z'
+          description: authorization timestamp
+        amount:
+          $ref: '#/components/schemas/Amount'
+        details:
+          $ref: '#/components/schemas/AuthorizationCallbackDetails'
+    AuthorizationCallbackDetails:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
+        - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
+      discriminator:
+        propertyName: outcome
+        mapping:
+          AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
+          DECLINED: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          REFUSED: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          CANCELED_BY_USER: '#/components/schemas/AuthorizationCallbackDetailsKo'
+          TIMEOUT: '#/components/schemas/AuthorizationCallbackDetailsKo'
+    AuthorizationCallbackDetailsOk:
+      type: object
+      description: Authorization outcome OK details
+      required:
+        - paymentType
+        - details
+      properties:
+        paymentType:
+          type: string
+          enum:
+            - CARD
+        details:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
+      discriminator:
+        propertyName: paymentType
+        mapping:
+          CARD: '#/components/schemas/AuthorizationCallbackCardDetailsOk'
+    AuthorizationCallbackCardDetailsOk:
+      type: object
+      description: Authorization outcome OK details
+      required:
+        - bin
+        - lastFourDigits
+        - paymentAuthCode
+        - rrn
+        - brand
+      properties:
+        bin:
+          $ref: '#/components/schemas/Bin'
+        lastFourDigits:
+          $ref: '#/components/schemas/LastFourDigits'
+        paymentAuthCode:
+          $ref: '#/components/schemas/PaymentAuthCode'
+        rrn:
+          $ref: '#/components/schemas/RRN'
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+    AuthorizationCallbackDetailsKo:
+      type: object
+      required:
+        - errorDescription
+      properties:
+        errorDescription:
+          type: string
+          description: error description
+    ActivatePaymentRequest:
+      type: object
+      required:
+        - paymentNotice
+        - sessionId
+      properties:
+        paymentNotices:
+          type: array
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/PaymentNoticeActivation'
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
+    PaymentNoticeActivation:
+      type: object
+      required:
+        - amount
+        - rptId
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        rptId:
+          $ref: '#/components/schemas/RptId'
+    ActivatePaymentResponse:
+      type: object
+      required:
+        - transactionId
+        - paymentToken
+      properties:
+        transactionId:
+          $ref: '#/components/schemas/TransactionId'
+        details:
+          type: array
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/ActivatePaymentInfo'
+    ProblemJson:
+      description: Body definition for error responses containing failure details
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |-
+            An absolute URI that identifies the problem type. When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          examples:
+            - 'https://example.com/problem/constraint-violation'
+        title:
+          type: string
+          description: >-
+            A short, summary of the problem type. Written in english and
+            readable
+
+            for engineers (usually not suited for non technical stakeholders and
+
+            not localized); example: Service Unavailable
+        status:
+          $ref: '#/components/schemas/HttpStatusCode'
+        detail:
+          type: string
+          description: |-
+            A human readable explanation specific to this occurrence of the
+            problem.
+          examples:
+            - "There was an error processing the request"
+        instance:
+          type: string
+          format: uri
+          description: >-
+            An absolute URI that identifies the specific occurrence of the
+            problem.
+
+            It may or may not yield further information if dereferenced.
+    HttpStatusCode:
+      type: integer
+      format: int32
+      description: |-
+        The HTTP status code generated by the origin server for this occurrence
+        of the problem.
+      minimum: 100
+      exclusiveMaximum: 600
+      examples:
+        - 200
