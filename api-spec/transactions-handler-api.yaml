@@ -362,14 +362,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsOk'
         - $ref: '#/components/schemas/AuthorizationCallbackDetailsKo'
-      discriminator:
-        propertyName: outcome
-        mapping:
-          AUTHORIZED: '#/components/schemas/AuthorizationCallbackDetailsOk'
-          DECLINED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          REFUSED: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          CANCELED_BY_USER: '#/components/schemas/AuthorizationCallbackDetailsKo'
-          TIMEOUT: '#/components/schemas/AuthorizationCallbackDetailsKo'
     AuthorizationCallbackDetailsOk:
       type: object
       description: Authorization outcome OK details
@@ -491,7 +483,7 @@ components:
       type: object
       required:
         - terminalId
-        - debtPosition
+        - debtPositions
       properties:
         terminalId:
           $ref: '#/components/schemas/TerminalId'
@@ -526,12 +518,6 @@ components:
             - $ref: '#/components/schemas/DebtPositionToCreateDetails'
             - $ref: '#/components/schemas/CiProvidedDebtPositionDetails'
             - $ref: '#/components/schemas/DebtPositionToCreateWithProvidedIuvDetails'
-          discriminator:
-            propertyName: type
-            mapping:
-              TO_CREATE: '#/components/schemas/DebtPositionToCreateDetails'
-              CI_PROVIDED: '#/components/schemas/CiProvidedDebtPositionDetails'
-              TO_CREATE_PROVIDED_IUV: '#/components/schemas/DebtPositionToCreateWithProvidedIuvDetails'
     DebtPositionToCreateDetails:
       type: object
       required:
@@ -645,19 +631,29 @@ components:
             
                 - ERROR -> POS payment terminated with error, payment session can be discarded
             
-                - ONGOING -> POS gateway payment still in progess, wait for notification
+                - ONGOING -> POS gateway payment still in progress, wait for notification
             
                 - SUCCESS -> POS gateway payment completed and notified successfully to CI layer through the ciNotifyAuthorizationOutcome operation
+    PaymentResponseOutcome:
+      type: string
+      enum:
+        - OK
+        - KO
     PaymentResponse:
       type: object
-      oneOf:
-        - $ref: '#/components/schemas/OkPaymentResponse'
-        - $ref: '#/components/schemas/KoPaymentResponse'
+      required:
+        - outcome
+      properties:
+        outcome:
+          $ref: '#/components/schemas/PaymentResponseOutcome'
       discriminator:
         propertyName: outcome
         mapping:
           OK: '#/components/schemas/OkPaymentResponse'
           KO: '#/components/schemas/KoPaymentResponse'
+      oneOf:
+        - $ref: '#/components/schemas/OkPaymentResponse'
+        - $ref: '#/components/schemas/KoPaymentResponse'
     OkPaymentResponse:
       type: object
       required:
@@ -666,9 +662,7 @@ components:
         - details
       properties:
         outcome:
-          type: string
-          enum:
-            - OK
+          $ref: '#/components/schemas/PaymentResponseOutcome'
         amount:
           $ref: '#/components/schemas/Amount'
         details:
@@ -684,9 +678,7 @@ components:
         - details
       properties:
         outcome:
-          type: string
-          enum:
-            - KO
+          $ref: '#/components/schemas/PaymentResponseOutcome'
         amount:
           $ref: '#/components/schemas/Amount'
         details:
