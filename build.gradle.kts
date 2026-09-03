@@ -13,7 +13,7 @@ plugins {
 
 group = "it.pagopa"
 
-version = "0.0.4"
+version = "0.0.5"
 
 apply(plugin = "com.dipien.semantic-version")
 
@@ -31,9 +31,18 @@ object Deps {
   const val ECS_LOGGING_VERSION = "1.8.0"
   const val SWAGGER_ANNOTATIONS_VERSION = "2.2.31"
   const val JACKSON_DATABIND_NULLABLE_VERSION = "0.2.6"
+  const val OTEL_INSTRUMENTATION_VERSION = "2.28.0"
 }
 
 dependencies {
+  // Open telemetry instrumentation
+  implementation(
+    platform(
+      "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${Deps.OTEL_INSTRUMENTATION_VERSION}"
+    )
+  )
+  implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
+
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-validation")
