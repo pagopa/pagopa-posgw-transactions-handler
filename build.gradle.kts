@@ -8,6 +8,7 @@ plugins {
   id("org.graalvm.buildtools.native") version "1.1.1"
   id("com.diffplug.spotless") version "8.9.0"
   id("com.dipien.semantic-version") version "2.0.0" apply false
+  id("org.openapi.generator") version "7.25.0"
 }
 
 group = "it.pagopa"
@@ -28,15 +29,24 @@ repositories {
 
 object Deps {
   const val ECS_LOGGING_VERSION = "1.8.0"
+  const val SWAGGER_ANNOTATIONS_VERSION = "2.2.31"
+  const val JACKSON_DATABIND_NULLABLE_VERSION = "0.2.6"
 }
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("tools.jackson.module:jackson-module-kotlin")
+  implementation(
+    "io.swagger.core.v3:swagger-annotations-jakarta:${Deps.SWAGGER_ANNOTATIONS_VERSION}"
+  )
+  implementation(
+    "org.openapitools:jackson-databind-nullable:${Deps.JACKSON_DATABIND_NULLABLE_VERSION}"
+  )
 
   // ECS logback encoder
   implementation("co.elastic.logging:logback-ecs-encoder:${Deps.ECS_LOGGING_VERSION}")
@@ -108,6 +118,48 @@ graalvmNative {
       buildArgs.add("--enable-native-access=ALL-UNNAMED")
     }
   }
+}
+
+tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(
+  "transactions-handler"
+) {
+  description = "Generate transactions-handler API client"
+  group = "openapi-generation"
+  generatorName.set("spring")
+  inputSpec.set("$rootDir/api-spec/transactions-handler-api.yaml")
+  outputDir.set(layout.buildDirectory.get().dir("generated").asFile.toString())
+  apiPackage.set("it.pagopa.generated.posgw.transactions.handler.api")
+  modelPackage.set("it.pagopa.generated.posgw.transactions.handler.model")
+  generateApiDocumentation.set(false)
+  generateApiTests.set(false)
+  generateModelTests.set(false)
+  library.set("spring-boot")
+  modelNameSuffix.set("Dto")
+  configOptions.set(
+    mapOf(
+      "annotationLibrary" to "swagger2",
+      "openApiNullable" to "true",
+      "interfaceOnly" to "true",
+      "hideGenerationTimestamp" to "true",
+      "skipDefaultInterface" to "true",
+      "useSwaggerUI" to "false",
+      "reactive" to "true",
+      "useSpringBoot3" to "true",
+      "oas3" to "true",
+      "generateSupportingFiles" to "true",
+      "enumPropertyNaming" to "MACRO_CASE",
+    )
+  )
+}
+
+sourceSets {
+  named("main") {
+    java.srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+  }
+}
+
+tasks.named("compileKotlin") {
+  dependsOn("transactions-handler")
 }
 
 /**
