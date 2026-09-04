@@ -9,7 +9,8 @@ PagoPA microservice that handles transactions' lifecycle and workflow for pos-ga
 
 ## Api Documentation 📖
 
-TODO
+See
+the [OpenAPI 3 here.](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-posgw-transactions-handler/main/api-spec/transactions-handler-api.yaml)
 
 ---
 
