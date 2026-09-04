@@ -13,6 +13,7 @@ COPY eclipse-style.xml eclipse-style.xml
 COPY src src
 COPY api-spec api-spec
 
+ENV ACTIVE_PROFILE=k8s
 RUN chmod +x ./gradlew
 RUN ./gradlew :nativeCompile
 

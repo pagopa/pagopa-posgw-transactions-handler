@@ -12,6 +12,7 @@ COPY src src
 COPY api-spec api-spec
 
 RUN chmod +x ./gradlew
+ENV ACTIVE_PROFILE=k8s
 RUN ./gradlew build -x test
 #remove plain jar, required by native compilations only
 RUN rm build/libs/*-plain.jar
