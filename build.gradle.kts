@@ -9,6 +9,8 @@ plugins {
   id("com.diffplug.spotless") version "8.9.0"
   id("com.dipien.semantic-version") version "2.0.0" apply false
   id("org.openapi.generator") version "7.25.0"
+  id("org.sonarqube") version "7.5.0.8588"
+  jacoco
 }
 
 group = "it.pagopa"
@@ -180,4 +182,22 @@ tasks.processResources { filesMatching("application.properties") { expand(projec
 /** Semantic versioning plugin configuration */
 tasks.named("incrementVersion") {
   dependsOn("prepareKotlinBuildScriptModel")
+}
+
+tasks.test {
+  useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+sonar {
+  properties {
+    property("sonar.coverage.exclusions", "**/PagopaPosgwTransactionsHandlerApplicationKt.class")
+  }
+}
+
+tasks.jacocoTestReport {
+  dependsOn(tasks.test)
+  reports {
+    xml.required.set(true)
+  }
 }
