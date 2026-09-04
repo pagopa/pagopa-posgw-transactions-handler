@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: "pagopa-posgw-transactions-handler"
   image:
     repository: pagopaditncoreacr.azurecr.io/pagopaposgwtransactionshandler
-    tag: "0.0.6"
+    tag: "0.0.7"
     pullPolicy: Always
   livenessProbe:
     httpGet:
