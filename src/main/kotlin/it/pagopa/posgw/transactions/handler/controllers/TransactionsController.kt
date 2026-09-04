@@ -5,40 +5,33 @@ import it.pagopa.generated.posgw.transactions.handler.model.AuthorizationOutcome
 import it.pagopa.generated.posgw.transactions.handler.model.PaymentRequestDto
 import it.pagopa.generated.posgw.transactions.handler.model.PaymentResponseDto
 import it.pagopa.generated.posgw.transactions.handler.model.SessionStatusResponseDto
-import jakarta.validation.Valid
-import jakarta.validation.constraints.NotNull
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ServerWebExchange
-import reactor.core.publisher.Mono
 
 @RestController
 class TransactionsController : PosApi {
 
-    override fun ciCreatePosPayment(
+    override suspend fun ciCreatePosPayment(
         sessionId: UUID,
-        xCorrelationId: @NotNull UUID,
-        paymentRequestDto: @Valid Mono<PaymentRequestDto>,
-        exchange: ServerWebExchange
-    ): Mono<ResponseEntity<PaymentResponseDto>> {
+        xCorrelationId: UUID,
+        paymentRequestDto: PaymentRequestDto
+    ): ResponseEntity<PaymentResponseDto> {
         TODO("Not yet implemented")
     }
 
-    override fun paymentAuthorizationCallback(
-        xCorrelationId: @NotNull UUID,
+    override suspend fun paymentAuthorizationCallback(
+        xCorrelationId: UUID,
         sessionId: UUID,
-        authorizationOutcomeDetailsDto: @Valid Mono<AuthorizationOutcomeDetailsDto>,
-        exchange: ServerWebExchange
-    ): Mono<ResponseEntity<Void>> {
+        authorizationOutcomeDetailsDto: AuthorizationOutcomeDetailsDto
+    ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun posGatewayGetPaymentSession(
+    override suspend fun posGatewayGetPaymentSession(
         sessionId: UUID,
-        xCorrelationId: @NotNull UUID,
-        exchange: ServerWebExchange
-    ): Mono<ResponseEntity<SessionStatusResponseDto>> {
+        xCorrelationId: UUID
+    ): ResponseEntity<SessionStatusResponseDto> {
         TODO("Not yet implemented")
     }
 }

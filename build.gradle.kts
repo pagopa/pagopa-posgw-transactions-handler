@@ -134,7 +134,7 @@ tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(
 ) {
   description = "Generate transactions-handler API client"
   group = "openapi-generation"
-  generatorName.set("spring")
+  generatorName.set("kotlin-spring")
   inputSpec.set("$rootDir/api-spec/transactions-handler-api.yaml")
   outputDir.set(layout.buildDirectory.get().dir("generated").asFile.toString())
   apiPackage.set("it.pagopa.generated.posgw.transactions.handler.api")
@@ -156,14 +156,14 @@ tasks.register<org.openapitools.generator.gradle.plugin.tasks.GenerateTask>(
       "useSpringBoot3" to "true",
       "oas3" to "true",
       "generateSupportingFiles" to "true",
-      "enumPropertyNaming" to "MACRO_CASE",
+      "enumPropertyNaming" to "UPPERCASE",
     )
   )
 }
 
 sourceSets {
   named("main") {
-    java.srcDir(layout.buildDirectory.dir("generated/src/main/java"))
+    kotlin.srcDir(layout.buildDirectory.dir("generated/src/main/kotlin"))
   }
 }
 
