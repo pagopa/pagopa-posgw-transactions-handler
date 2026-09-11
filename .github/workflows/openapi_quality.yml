@@ -1,0 +1,33 @@
+name: OpenAPI Quality Check
+
+# runs when the specs or the check itself change, on any base branch
+on:
+  pull_request:
+    paths:
+      - 'api-spec/**/*.yaml'
+      - 'api-spec/**/*.yml'
+      - '.github/workflows/openapi_quality.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  openapi_quality:
+    runs-on: ubuntu-latest
+    name: Lint ${{ matrix.spec.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        spec:
+          - path: 'api-spec/transactions-handler-api.yaml'
+            version: 'v1'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Lint ${{ matrix.spec.path }}
+        # note: ruleset bundled with the shared action, can be overridden if needed
+        uses: pagopa/github-actions-template/openapi-lint@bfb849a1e43acbc9347afae2428a799e0d2efe88
+        with:
+          spec_path: ${{ matrix.spec.path }}
+          #fail_on_violation: false
