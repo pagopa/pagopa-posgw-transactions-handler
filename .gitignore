@@ -35,3 +35,6 @@ build
 /.gradle
 .env
 /out/
+
+#Spectral OpeanAPI linter
+/default.spectral.yaml

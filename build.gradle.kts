@@ -27,6 +27,14 @@ java {
 
 repositories {
   mavenCentral()
+  maven {
+    name = "GitHubPackages"
+    url = uri("https://maven.pkg.github.com/pagopa/pagopa-posgw-common")
+    credentials {
+      username = "token"
+      password = System.getenv("GITHUB_TOKEN")
+    }
+  }
 }
 
 object Deps {
@@ -35,6 +43,9 @@ object Deps {
   const val JACKSON_DATABIND_NULLABLE_VERSION = "0.2.6"
   const val OTEL_INSTRUMENTATION_VERSION = "2.28.0"
 }
+
+// posgw-common library version
+val posgwCommonVersion = "0.0.1-CHK-5025-setup-project-40a2d1c-SNAPSHOT"
 
 dependencies {
   // Open telemetry instrumentation
@@ -62,10 +73,14 @@ dependencies {
   // ECS logback encoder
   implementation("co.elastic.logging:logback-ecs-encoder:${Deps.ECS_LOGGING_VERSION}")
 
+  // posgw-common library
+  implementation("it.pagopa:pagopa-posgw-common:${posgwCommonVersion}")
+
   testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+  testImplementation("it.pagopa:pagopa-posgw-common:$posgwCommonVersion:tests")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

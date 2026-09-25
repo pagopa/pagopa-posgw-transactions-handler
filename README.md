@@ -26,6 +26,18 @@ the [OpenAPI 3 here.](https://editor.swagger.io/?url=https://raw.githubuserconte
 ### Prerequisites
 
 - Docker
+- GitHub personal access token with `packages:read` permission
+
+### GitHub Token Setup
+
+To access the `pagopa-posgw-common` library from GitHub Packages, you need to set up authentication:
+
+1. Create a GitHub personal access token with `packages:read` permission
+2. Set the token as an environment variable:
+
+```shell
+export GITHUB_TOKEN=your_github_token_with_packages_read_permission
+```
 
 ### Populate the environment
 
@@ -39,7 +51,8 @@ cp .env.example .env
 
 ### Build Docker Image
 ```sh
-docker build -t pagopa-posgw-transactions-handler .
+export GITHUB_TOKEN=your_github_token_with_packages_read_permission
+docker build --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN -t pagopa-posgw-transactions-handler .
 ```
 
 ### Run with Docker Compose
@@ -94,6 +107,18 @@ $ ./gradlew test
 #### Integration testing
 
 TODO
+
+### Pos-gateway Common Library
+
+The service uses the `posgw-common` library which is distributed via GitHub Packages. The library version is configured in `build.gradle.kts`.
+
+This property maps the `posgw-common` version:
+
+````
+val posgwCommonVersion = "x.y.z" -> valued with posgw common wanted version
+````
+
+The library is automatically downloaded from GitHub Packages during the build process using the configured GitHub token.
 
 ---
 

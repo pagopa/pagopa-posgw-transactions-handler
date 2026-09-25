@@ -49,6 +49,8 @@ stages:
               sonarQubeRunAnalysis: true
               sqGradlePluginVersionChoice: 'specify'
               sonarQubeGradlePluginVersion: '7.4.0.8496'
+            env:
+              GITHUB_TOKEN: $(GITHUB_RO_TOKEN)
 
           - task: SonarCloudPublish@3
             displayName: 'Publish SonarCloud results on build summary'
