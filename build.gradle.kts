@@ -45,7 +45,7 @@ object Deps {
 }
 
 // posgw-common library version
-val posgwCommonVersion = "0.0.1-CHK-5025-setup-project-40a2d1c-SNAPSHOT"
+val posgwCommonVersion = "0.0.2-CHK-5025-fix-deploy-actions-bd1b993"
 
 dependencies {
   // Open telemetry instrumentation
