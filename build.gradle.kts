@@ -42,6 +42,7 @@ object Deps {
   const val SWAGGER_ANNOTATIONS_VERSION = "2.2.31"
   const val JACKSON_DATABIND_NULLABLE_VERSION = "0.2.6"
   const val OTEL_INSTRUMENTATION_VERSION = "2.28.0"
+  const val SPRING_CLOUD_INTEGRATION = "7.4.0"
 }
 
 // posgw-common library version
@@ -59,6 +60,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-validation")
+  implementation("com.azure.spring:spring-cloud-azure-starter-servicebus")
   implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -69,6 +71,11 @@ dependencies {
   implementation(
     "org.openapitools:jackson-databind-nullable:${Deps.JACKSON_DATABIND_NULLABLE_VERSION}"
   )
+
+  implementation(
+    platform("com.azure.spring:spring-cloud-azure-dependencies:${Deps.SPRING_CLOUD_INTEGRATION}")
+  )
+  implementation("com.azure.spring:spring-cloud-azure-starter-servicebus")
 
   // ECS logback encoder
   implementation("co.elastic.logging:logback-ecs-encoder:${Deps.ECS_LOGGING_VERSION}")
