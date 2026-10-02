@@ -15,7 +15,7 @@ plugins {
 
 group = "it.pagopa"
 
-version = "0.0.9"
+version = "0.0.10"
 
 apply(plugin = "com.dipien.semantic-version")
 
