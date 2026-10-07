@@ -5,7 +5,7 @@ plugins {
   kotlin("plugin.spring") version "2.3.21"
   id("org.springframework.boot") version "4.1.0"
   id("io.spring.dependency-management") version "1.1.7"
-  id("org.graalvm.buildtools.native") version "1.1.1"
+  id("org.graalvm.buildtools.native") version "1.1.14"
   id("com.diffplug.spotless") version "8.9.0"
   id("com.dipien.semantic-version") version "2.0.0" apply false
   id("org.openapi.generator") version "7.25.0"
@@ -61,6 +61,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("com.azure.spring:spring-cloud-azure-starter-servicebus")
+  implementation("com.azure:azure-messaging-servicebus:7.18.1")
   implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -149,6 +150,10 @@ graalvmNative {
       // Grant native access to suppress Java 22+ restricted method warnings
       // triggered when underlying frameworks (e.g., Reactor Netty) load C native libraries via JNI
       buildArgs.add("--enable-native-access=ALL-UNNAMED")
+      // Azure SDK JARs are signed; Spring Boot native images don't support their signature verification.
+      buildArgs.add(
+        "-Djava.security.properties=${file("$rootDir/src/main/resources/custom.security").absolutePath}"
+      )
     }
   }
 }
