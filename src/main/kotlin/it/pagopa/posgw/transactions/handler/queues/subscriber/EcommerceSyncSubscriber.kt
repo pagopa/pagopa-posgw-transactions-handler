@@ -1,15 +1,16 @@
-package it.pagopa.posgw.transactions.handler.queues.publisher
+package it.pagopa.posgw.transactions.handler.queues.subscriber
 
+import com.azure.messaging.servicebus.ServiceBusProcessorClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class EcommerceSyncPublisher(
+class EcommerceSyncSubscriber(
     @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
     @Value($$"${azure.servicebus.queues.ecommerce.sync}") override val resourceName: String
-) : Publisher {
-    override val logger: Logger = LoggerFactory.getLogger(EcommerceSyncPublisher::class.java)
-    override val client = clientBuilder()
+) : Subscriber {
+    override val logger: Logger = LoggerFactory.getLogger(EcommerceSyncSubscriber::class.java)
+    override val client: ServiceBusProcessorClient = clientBuilder()
 }

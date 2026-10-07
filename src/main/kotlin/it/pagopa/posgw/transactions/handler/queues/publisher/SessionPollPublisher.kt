@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class SystemTelemetryPublisher(
+class SessionPollPublisher(
     @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.topics.system.telemetry}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.session.poll}") override val resourceName: String
 ) : Publisher {
-    override val logger: Logger = LoggerFactory.getLogger(SystemTelemetryPublisher::class.java)
+    override val logger: Logger = LoggerFactory.getLogger(SessionPollPublisher::class.java)
     override val client = clientBuilder()
 }
