@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class GecSyncPublisher(
-    @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.gec.sync}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.gec.sync.connection-string}") override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.gec.sync.queue-name}") override val resourceName: String
 ) : Publisher {
     override val logger: Logger = LoggerFactory.getLogger(GecSyncPublisher::class.java)
     override val client = clientBuilder()

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class SessionExpirePublisher(
-    @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.session.expire}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.session.expire.connection-string}") override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.session.expire.queue-name}") override val resourceName: String
 ) : Publisher {
     override val logger: Logger = LoggerFactory.getLogger(SessionExpirePublisher::class.java)
     override val client = clientBuilder()

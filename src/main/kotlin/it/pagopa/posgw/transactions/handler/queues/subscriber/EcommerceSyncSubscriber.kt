@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class EcommerceSyncSubscriber(
-    @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.ecommerce.sync}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.ecommerce.sync.connection-string}") override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.ecommerce.sync.queue-name}") override val resourceName: String
 ) : Subscriber {
     override val logger: Logger = LoggerFactory.getLogger(EcommerceSyncSubscriber::class.java)
     override val client: ServiceBusProcessorClient = clientBuilder()

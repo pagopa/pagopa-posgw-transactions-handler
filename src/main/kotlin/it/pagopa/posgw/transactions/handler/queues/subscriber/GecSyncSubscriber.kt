@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class GecSyncSubscriber(
-    @Value($$"${azure.servicebus.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.gec.sync}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.gec.sync.connection-string}") override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.gec.sync.queue-name}") override val resourceName: String
 ) : Subscriber {
 
     override var logger: Logger = LoggerFactory.getLogger(GecSyncSubscriber::class.java)
