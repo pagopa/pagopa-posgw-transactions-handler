@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class SessionPollingSubscriber(
-    @Value($$"${azure.servicebus.queues.session.poll.connection-string}") override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.session.poll.connection-string}")
+    override val connectionString: String,
     @Value($$"${azure.servicebus.queues.session.poll.queue-name}") override val resourceName: String
 ) : Subscriber {
 

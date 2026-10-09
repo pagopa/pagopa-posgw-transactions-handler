@@ -6,6 +6,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class AzureProperties {
-    @Bean
-    fun azureGlobalProperties(): AzureGlobalProperties = AzureGlobalProperties()
+    @Bean fun azureGlobalProperties(): AzureGlobalProperties = AzureGlobalProperties()
 }

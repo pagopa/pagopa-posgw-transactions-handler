@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class SessionExpireSubscriber(
-    @Value($$"${azure.servicebus.queues.session.expire.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.session.expire.queue-name}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.session.expire.connection-string}")
+    override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.session.expire.queue-name}")
+    override val resourceName: String
 ) : Subscriber {
 
     override var logger: Logger = LoggerFactory.getLogger(SessionExpireSubscriber::class.java)
