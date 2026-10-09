@@ -15,6 +15,7 @@ COPY api-spec api-spec
 
 ENV ACTIVE_PROFILE=k8s
 RUN chmod +x ./gradlew
+
 RUN --mount=type=secret,id=GITHUB_TOKEN \
     GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) \
     ./gradlew :nativeCompile
