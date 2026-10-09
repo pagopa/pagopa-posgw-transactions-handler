@@ -32,8 +32,7 @@ class PublisherController(
 
     @Bean
     fun router(): RouterFunction<*> = router {
-        (POST("/publish") and accept(APPLICATION_JSON))
-            .invoke(publishMessage)
+        (POST("/publish") and accept(APPLICATION_JSON)).invoke(publishMessage)
     }
 
     val publishMessage: (ServerRequest) -> Mono<ServerResponse> = { req ->
@@ -45,23 +44,31 @@ class PublisherController(
                 val properties = it["properties"] as Map<String, Any>? ?: mapOf()
 
                 if (message.isNullOrBlank()) {
-                    ServerResponse.ok().bodyValue(mapOf("result" to "You forgot the 'message' value in the body!"))
+                    ServerResponse.ok()
+                        .bodyValue(mapOf("result" to "You forgot the 'message' value in the body!"))
                 } else {
                     when (resource) {
-                        "posgw.cmd.ecommerce.sync" -> ecommerceSyncPublisher.publish(message, properties)
-                        "posgw.cmd.ecommerce.sync.retry" -> ecommerceSyncRetryPublisher.publish(message, properties)
+                        "posgw.cmd.ecommerce.sync" ->
+                            ecommerceSyncPublisher.publish(message, properties)
+                        "posgw.cmd.ecommerce.sync.retry" ->
+                            ecommerceSyncRetryPublisher.publish(message, properties)
                         "posgw.cmd.gec.sync" -> gecSyncPublisher.publish(message, properties)
-                        "posgw.cmd.gec.sync.retry" -> gecSyncRetryPublisher.publish(message, properties)
-                        "posgw.cmd.session.poll" -> sessionPollPublisher.publish(message, properties)
-                        "posgw.cmd.session.expire" -> sessionExpirePublisher.publish(message, properties)
-                        "posgw.evt.sys.telemetry" -> systemTelemetryPublisher.publish(message, properties)
-                        else -> Mono.just("You forgot the 'resource' value in the body or the value is invalid!")
-                    }
-                    .flatMap { s -> ServerResponse.ok().bodyValue(mapOf("result" to s)) }
+                        "posgw.cmd.gec.sync.retry" ->
+                            gecSyncRetryPublisher.publish(message, properties)
+                        "posgw.cmd.session.poll" ->
+                            sessionPollPublisher.publish(message, properties)
+                        "posgw.cmd.session.expire" ->
+                            sessionExpirePublisher.publish(message, properties)
+                        "posgw.evt.sys.telemetry" ->
+                            systemTelemetryPublisher.publish(message, properties)
+                        else ->
+                            Mono.just(
+                                "You forgot the 'resource' value in the body or the value is invalid!")
+                    }.flatMap { s -> ServerResponse.ok().bodyValue(mapOf("result" to s)) }
                 }
-
             }
-            .doOnError { ServerResponse.ok().bodyValue(mapOf("result" to "Unable to create map: $it")) }
+            .doOnError {
+                ServerResponse.ok().bodyValue(mapOf("result" to "Unable to create map: $it"))
+            }
     }
-
 }

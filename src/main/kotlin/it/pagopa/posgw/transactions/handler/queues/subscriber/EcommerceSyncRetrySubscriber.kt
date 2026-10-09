@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class EcommerceSyncRetrySubscriber(
-    @Value($$"${azure.servicebus.queues.ecommerce.sync-retry.connection-string}") override val connectionString: String,
-    @Value($$"${azure.servicebus.queues.ecommerce.sync-retry.queue-name}") override val resourceName: String
+    @Value($$"${azure.servicebus.queues.ecommerce.sync-retry.connection-string}")
+    override val connectionString: String,
+    @Value($$"${azure.servicebus.queues.ecommerce.sync-retry.queue-name}")
+    override val resourceName: String
 ) : Subscriber {
 
     override val logger: Logger = LoggerFactory.getLogger(EcommerceSyncRetrySubscriber::class.java)

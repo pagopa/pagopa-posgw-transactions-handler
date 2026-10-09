@@ -6,8 +6,8 @@ import com.azure.messaging.servicebus.ServiceBusProcessorClient
 import com.azure.spring.cloud.service.servicebus.consumer.ServiceBusRecordMessageListener
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
-import org.slf4j.Logger
 import java.util.function.Consumer
+import org.slf4j.Logger
 
 interface Subscriber {
 
@@ -16,7 +16,8 @@ interface Subscriber {
     val logger: Logger
     val client: ServiceBusProcessorClient
 
-    fun clientBuilder(): ServiceBusProcessorClient = ServiceBusClientBuilder()
+    fun clientBuilder(): ServiceBusProcessorClient =
+        ServiceBusClientBuilder()
             .connectionString(connectionString)
             .processor()
             .queueName(resourceName)
@@ -25,7 +26,8 @@ interface Subscriber {
             .buildProcessorClient()
 
     fun getMessageProcessor(): ServiceBusRecordMessageListener = { ctx ->
-        logger.info("""
+        logger.info(
+            """
             >>>>>>>>RECEIVED MESSAGE FROM $resourceName<<<<<<<<
             PROPERTIES: ${ctx.message.applicationProperties}
             MESSAGE_ID: ${ctx.message.messageId}
@@ -42,25 +44,27 @@ interface Subscriber {
             enqueuedTime: ${ctx.message.enqueuedTime}
             deadLetterReason: ${ctx.message.deadLetterReason}
             >>>>>>>>END MESSAGE FROM $resourceName<<<<<<<<
-        """.trimIndent()
-        )
+        """
+                .trimIndent())
     }
 
     fun getErrorProcessor(): Consumer<ServiceBusErrorContext> = Consumer { ctx ->
-        logger.info("""
+        logger.info(
+            """
             >>>>>>>>RECEIVED ERROR<<<<<<<<
             ENTITY_PATH: ${ctx.entityPath}
             ERROR_SOURCE: ${ctx.errorSource}
             EXCEPTION: ${ctx.exception}
             FULLY_QUALIFIED_NAMESPACE: ${ctx.fullyQualifiedNamespace}
             >>>>>>>>END RECEIVED ERROR<<<<<<<<
-        """.trimIndent()
-        )
+        """
+                .trimIndent())
     }
 
     @PostConstruct
     fun start() {
-        logger.info("Started consumer ${this.javaClass.name} with topic ${client.topicName} / queue ${client.queueName}")
+        logger.info(
+            "Started consumer ${this.javaClass.name} with topic ${client.topicName} / queue ${client.queueName}")
         client.start()
     }
 

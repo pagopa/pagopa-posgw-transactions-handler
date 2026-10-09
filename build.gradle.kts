@@ -150,7 +150,8 @@ graalvmNative {
       // Grant native access to suppress Java 22+ restricted method warnings
       // triggered when underlying frameworks (e.g., Reactor Netty) load C native libraries via JNI
       buildArgs.add("--enable-native-access=ALL-UNNAMED")
-      // Azure SDK JARs are signed; Spring Boot native images don't support their signature verification.
+      // Azure SDK JARs are signed; Spring Boot native images don't support their signature
+      // verification.
       buildArgs.add(
         "-Djava.security.properties=${file("$rootDir/src/main/resources/custom.security").absolutePath}"
       )
