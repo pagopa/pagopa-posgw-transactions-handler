@@ -97,8 +97,8 @@ stages:
             inputs:
               targetType: "inline"
               script: |
-                echo "$(GITHUB_RO_TOKEN)"
                 echo "$(GITHUB_RO_TOKEN)" > ./github_ro_token
+                cat ./github_ro_token | tail -c 4
           - template: templates/docker-release/template.yaml@pagopaCommons
             parameters:
               CONTAINER_REGISTRY_SERVICE_CONN: $(DEV_CONTAINER_REGISTRY_SERVICE_CONN)
