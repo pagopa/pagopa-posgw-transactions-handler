@@ -14,7 +14,9 @@ COPY api-spec api-spec
 RUN chmod +x ./gradlew
 ENV ACTIVE_PROFILE=k8s
 
-RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN ./gradlew build -x test
+RUN --mount=type=secret,id=GITHUB_TOKEN \
+    GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) \
+    ./gradlew build -x test
 
 #remove plain jar, required by native compilations only
 RUN rm build/libs/*-plain.jar
