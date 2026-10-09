@@ -29,10 +29,8 @@ interface Publisher {
 
 
         return client.sendMessage(queueMessage)
-            .doOnSuccess {
-                logger.info("Message published from ${this.javaClass.name} with id: ${queueMessage.messageId}")
-            }
             .map { _ -> queueMessage.messageId }
             .switchIfEmpty { Mono.just(queueMessage.messageId) }
+            .doOnNext { logger.info("Message published from ${this.javaClass.name} with id: ${queueMessage.messageId}") }
     }
 }
