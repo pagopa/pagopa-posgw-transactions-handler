@@ -79,7 +79,7 @@ microservice-chart:
     OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     OTEL_TRACES_EXPORTER: otlp
     OTEL_METRICS_EXPORTER: otlp
-    OTEL_LOGS_EXPORTER: otlp
+    OTEL_LOGS_EXPORTER: none
     OTEL_TRACES_SAMPLER: "always_on"
   envSecret:
     TEST: test1
