@@ -1,6 +1,7 @@
 package it.pagopa.posgw.transactions.handler.queues.subscriber
 
 import com.azure.messaging.servicebus.ServiceBusProcessorClient
+import it.pagopa.posgw.transactions.handler.queues.ResourceType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -15,5 +16,5 @@ class GecSyncRetrySubscriber(
 ) : Subscriber {
 
     override var logger: Logger = LoggerFactory.getLogger(GecSyncRetrySubscriber::class.java)
-    override var client: ServiceBusProcessorClient = clientBuilder()
+    override var client: ServiceBusProcessorClient = clientBuilder(ResourceType.QUEUE)
 }

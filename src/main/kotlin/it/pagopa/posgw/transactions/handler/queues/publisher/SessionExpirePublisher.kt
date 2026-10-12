@@ -1,5 +1,6 @@
 package it.pagopa.posgw.transactions.handler.queues.publisher
 
+import it.pagopa.posgw.transactions.handler.queues.ResourceType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -13,5 +14,5 @@ class SessionExpirePublisher(
     override val resourceName: String
 ) : Publisher {
     override val logger: Logger = LoggerFactory.getLogger(SessionExpirePublisher::class.java)
-    override val client = clientBuilder()
+    override val client = clientBuilder(ResourceType.QUEUE)
 }

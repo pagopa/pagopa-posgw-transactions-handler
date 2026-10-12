@@ -3,6 +3,7 @@ package it.pagopa.posgw.transactions.handler.queues.publisher
 import com.azure.messaging.servicebus.ServiceBusClientBuilder
 import com.azure.messaging.servicebus.ServiceBusMessage
 import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient
+import it.pagopa.posgw.transactions.handler.queues.ResourceType
 import java.util.UUID
 import org.slf4j.Logger
 import reactor.core.publisher.Mono
@@ -14,11 +15,16 @@ interface Publisher {
     val logger: Logger
     val client: ServiceBusSenderAsyncClient
 
-    fun clientBuilder(): ServiceBusSenderAsyncClient =
+    fun clientBuilder(resourceType: ResourceType): ServiceBusSenderAsyncClient =
         ServiceBusClientBuilder()
             .connectionString(connectionString)
             .sender()
-            .queueName(resourceName)
+            .let {
+                when (resourceType) {
+                    ResourceType.TOPIC -> it.topicName(resourceName)
+                    ResourceType.QUEUE -> it.queueName(resourceName)
+                }
+            }
             .buildAsyncClient()
 
     fun publish(message: String, properties: Map<String, Any> = mapOf()): Mono<String> {

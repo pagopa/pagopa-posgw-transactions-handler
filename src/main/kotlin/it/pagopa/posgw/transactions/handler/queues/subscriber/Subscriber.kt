@@ -4,6 +4,7 @@ import com.azure.messaging.servicebus.ServiceBusClientBuilder
 import com.azure.messaging.servicebus.ServiceBusErrorContext
 import com.azure.messaging.servicebus.ServiceBusProcessorClient
 import com.azure.spring.cloud.service.servicebus.consumer.ServiceBusRecordMessageListener
+import it.pagopa.posgw.transactions.handler.queues.ResourceType
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import java.util.function.Consumer
@@ -16,11 +17,16 @@ interface Subscriber {
     val logger: Logger
     val client: ServiceBusProcessorClient
 
-    fun clientBuilder(): ServiceBusProcessorClient =
+    fun clientBuilder(resourceType: ResourceType): ServiceBusProcessorClient =
         ServiceBusClientBuilder()
             .connectionString(connectionString)
             .processor()
-            .queueName(resourceName)
+            .let {
+                when (resourceType) {
+                    ResourceType.TOPIC -> it.topicName(resourceName)
+                    ResourceType.QUEUE -> it.queueName(resourceName)
+                }
+            }
             .processMessage { m -> getMessageProcessor().onMessage(m) }
             .processError { e -> getErrorProcessor().accept(e) }
             .buildProcessorClient()
