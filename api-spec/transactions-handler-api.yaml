@@ -32,7 +32,7 @@ paths:
       summary: POS authorization outcome callback
       security:
         - PagopaApiKeyAuth: []
-        - AuthOutcomeTokenAuth: []
+          AuthOutcomeTokenAuth: []
       description: Notify the transaction handler about the outcome of the payment phase
       operationId: paymentAuthorizationCallback
       parameters:
