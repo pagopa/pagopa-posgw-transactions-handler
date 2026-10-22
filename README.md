@@ -117,7 +117,7 @@ README to start all services using docker builds
 ### Run the project
 
 ```shell
-$ (set -a; source .env.local; set +a && ./gradlew bootRun)
+$ (set -a; source .env.example; set +a && ./gradlew bootRun)
 ```
 
 ### Code formatting
