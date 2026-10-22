@@ -92,7 +92,7 @@ microservice-chart:
     REDIS_SSL_ENABLED: "true"
     REDIS_TIMEOUT: "2000ms"
     REDIS_CONNECTION_TIMEOUT: "2000ms"
-    PAYMENT_SESSION_REDIS_TTL_SECONDS: "900"
+    PAYMENT_SESSION_REDIS_TTL_SECONDS: "1800"
   envSecret:
     SERVICE_BUS_ECOMMERCE_SYNC_CONNECTION_STRING: "posgw-d-posgw-th-ecommerce-sync-primary-connection-string"
     SERVICE_BUS_ECOMMERCE_SYNC_RETRY_CONNECTION_STRING: "posgw-d-posgw-th-ecommerce-sync-retry-primary-connection-string"

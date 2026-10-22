@@ -4,6 +4,7 @@ import it.pagopa.posgw.common.repositories.redis.v1.PaymentSession
 import it.pagopa.posgw.common.repositories.redis.v1.PaymentSessionTemplateWrapper
 import java.time.Duration
 import kotlin.reflect.KClass
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,6 +16,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 import tools.jackson.module.kotlin.jacksonObjectMapper
 
 @Configuration
+@RegisterReflectionForBinding(
+    PaymentSession::class,
+    PaymentSession.IntegrationType::class,
+    PaymentSession.Pos::class,
+    PaymentSession.Transaction::class,
+    PaymentSession.LifeCycle::class,
+    PaymentSession.Routing::class)
 class RedisConfig {
 
     @Bean
