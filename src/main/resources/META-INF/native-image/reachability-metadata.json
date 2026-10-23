@@ -1,4 +1,60 @@
 {
+  "reflection": [
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    },
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession$IntegrationType",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    },
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession$Pos",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    },
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession$Transaction",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    },
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession$LifeCycle",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    },
+    {
+      "type": "it.pagopa.posgw.common.repositories.redis.v1.PaymentSession$Routing",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true,
+      "allPublicFields": true
+    }
+  ],
   "resources": [
     {
       "module": "java.base",

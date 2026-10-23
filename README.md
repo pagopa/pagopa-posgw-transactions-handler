@@ -1,4 +1,5 @@
 # pagopa-posgw-transactions-handler
+
 PagoPA microservice that handles transactions' lifecycle and workflow for pos-gateway domain
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-posgw-transactions-handler&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-posgw-transactions-handler)
@@ -43,28 +44,65 @@ export GITHUB_TOKEN=your_github_token_with_packages_read_permission
 
 The microservice needs a valid `.env` file in order to be run.
 
-If you want to start the application without too much hassle, you can just copy `.env.example` to get a good default configuration with:
+If you want to start the application without too much hassle, you can just copy `.env.example` to get a good default
+configuration with:
 
 ```shell
 cp .env.example .env
 ```
 
+#### environment variables
+
+If you want to customize the application environment, reference this table:
+
+| Variable name                                        | Description                                               | type     | default |
+|------------------------------------------------------|-----------------------------------------------------------|----------|---------|
+| `ACTIVE_PROFILE`                                     | Spring active profile                                     | string   | `local` |
+| `ROOT_LOGGING_LEVEL`                                 | Root logging level                                        | string   | `INFO`  |
+| `APP_LOGGING_LEVEL`                                  | Logging level for `it.pagopa` packages                    | string   | `INFO`  |
+| `WEB_LOGGING_LEVEL`                                  | Logging level for Spring web                              | string   | `INFO`  |
+| `SERVICE_BUS_ECOMMERCE_SYNC_QUEUE_NAME`              | Name of the eCommerce sync Service Bus queue              | string   |         |
+| `SERVICE_BUS_ECOMMERCE_SYNC_CONNECTION_STRING`       | Connection string of the eCommerce sync queue             | string   |         |
+| `SERVICE_BUS_ECOMMERCE_SYNC_RETRY_QUEUE_NAME`        | Name of the eCommerce sync retry Service Bus queue        | string   |         |
+| `SERVICE_BUS_ECOMMERCE_SYNC_RETRY_CONNECTION_STRING` | Connection string of the eCommerce sync retry queue       | string   |         |
+| `SERVICE_BUS_GEC_SYNC_QUEUE_NAME`                    | Name of the GEC sync Service Bus queue                    | string   |         |
+| `SERVICE_BUS_GEC_SYNC_CONNECTION_STRING`             | Connection string of the GEC sync queue                   | string   |         |
+| `SERVICE_BUS_GEC_SYNC_RETRY_QUEUE_NAME`              | Name of the GEC sync retry Service Bus queue              | string   |         |
+| `SERVICE_BUS_GEC_SYNC_RETRY_CONNECTION_STRING`       | Connection string of the GEC sync retry queue             | string   |         |
+| `SERVICE_BUS_SESSION_POLL_QUEUE_NAME`                | Name of the session poll Service Bus queue                | string   |         |
+| `SERVICE_BUS_SESSION_POLL_CONNECTION_STRING`         | Connection string of the session poll queue               | string   |         |
+| `SERVICE_BUS_SESSION_EXPIRE_QUEUE_NAME`              | Name of the session expire Service Bus queue              | string   |         |
+| `SERVICE_BUS_SESSION_EXPIRE_CONNECTION_STRING`       | Connection string of the session expire queue             | string   |         |
+| `SERVICE_BUS_SYSTEM_TELEMETRY_TOPIC_NAME`            | Name of the system telemetry Service Bus topic            | string   |         |
+| `SERVICE_BUS_SYSTEM_TELEMETRY_CONNECTION_STRING`     | Connection string of the system telemetry topic           | string   |         |
+| `REDIS_HOST`                                         | Hostname of the Redis instance                            | string   |         |
+| `REDIS_PORT`                                         | Port the Redis instance listens to                        | number   |         |
+| `REDIS_PASSWORD`                                     | Password used to authenticate to Redis                    | string   |         |
+| `REDIS_SSL_ENABLED`                                  | Whether to use SSL for the Redis connection               | boolean  |         |
+| `REDIS_TIMEOUT`                                      | Redis command timeout                                     | duration |         |
+| `REDIS_CONNECTION_TIMEOUT`                           | Redis connection timeout                                  | duration |         |
+| `PAYMENT_SESSION_REDIS_TTL_SECONDS`                  | TTL in seconds of payment session entries stored in Redis | number   |         |
+
 ### Build Docker Image
+
 ```sh
 export GITHUB_TOKEN=your_github_token_with_packages_read_permission
 docker build --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN -t pagopa-posgw-transactions-handler .
 ```
 
 ### Run with Docker Compose
-Check that the .env file exists and is populated with the correct values (see [Populate the environment](#populate-the-environment)).
 
+Check that the .env file exists and is populated with the correct values (
+see [Populate the environment](#populate-the-environment)).
 
 Then start [posgw-local](https://github.com/pagopa/pagopa-posgw-local) project with:
 
 ```sh
 docker compose up --scale pagopa-posgw-transactions-handler=0
 ```
-This way you can use the locally build service version with posgw local project, otherwise see posgw local project README to start all services using docker builds
+
+This way you can use the locally build service version with posgw local project, otherwise see posgw local project
+README to start all services using docker builds
 
 ---
 
@@ -79,7 +117,7 @@ This way you can use the locally build service version with posgw local project,
 ### Run the project
 
 ```shell
-$ (set -a; source .env.local; set +a && ./gradlew bootRun)
+$ (set -a; source .env.example; set +a && ./gradlew bootRun)
 ```
 
 ### Code formatting
@@ -110,7 +148,8 @@ TODO
 
 ### Pos-gateway Common Library
 
-The service uses the `posgw-common` library which is distributed via GitHub Packages. The library version is configured in `build.gradle.kts`.
+The service uses the `posgw-common` library which is distributed via GitHub Packages. The library version is configured
+in `build.gradle.kts`.
 
 This property maps the `posgw-common` version:
 
