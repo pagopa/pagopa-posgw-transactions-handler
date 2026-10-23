@@ -91,7 +91,7 @@ class TestController(
     val getSession: (ServerRequest) -> Mono<ServerResponse> = { req ->
         paymentSessionTemplateWrapper
             .findById(req.pathVariable("sessionId"))
-            .doOnSuccess { logger.info("Fetched session: {}", it) }
+            .doOnNext { logger.info("Fetched session: {}", it) }
             .doOnError { logger.error("Error fetching session", it) }
             .flatMap { session ->
                 ServerResponse.ok().bodyValue(session)
@@ -124,7 +124,7 @@ class TestController(
             .flatMap { sessionDocument ->
                 paymentSessionTemplateWrapper
                     .save(sessionDocument)
-                    .doOnSuccess { saveResult ->
+                    .doOnNext { saveResult ->
                         logger.info(
                             "Saved session: [{}], document: [{}]", saveResult, sessionDocument)
                     }
