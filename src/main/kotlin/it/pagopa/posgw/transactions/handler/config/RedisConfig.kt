@@ -18,7 +18,7 @@ import tools.jackson.module.kotlin.jacksonObjectMapper
 class RedisConfig {
 
     @Bean
-    fun paymentMethodsRedisTemplate(
+    fun paymentSessionRedisTemplate(
         reactiveRedisConnectionFactory: ReactiveRedisConnectionFactory,
         @Value($$"${payment-session.cache.ttlSeconds}") ttlSeconds: Long,
     ): PaymentSessionTemplateWrapper {

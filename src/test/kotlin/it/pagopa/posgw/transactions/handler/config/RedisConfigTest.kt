@@ -19,7 +19,7 @@ class RedisConfigTest {
         val ttl = 10L
         // test
         val paymentSessionTemplateWrapper =
-            redisConfig.paymentMethodsRedisTemplate(
+            redisConfig.paymentSessionRedisTemplate(
                 reactiveRedisConnectionFactory = reactiveRedisConnectionFactory, ttlSeconds = ttl)
         // assertions
         assertEquals(Duration.ofSeconds(ttl), paymentSessionTemplateWrapper.defaultTTL)
