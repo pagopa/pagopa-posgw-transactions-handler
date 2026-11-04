@@ -88,6 +88,11 @@ microservice-chart:
     SERVICE_BUS_SESSION_POLL_QUEUE_NAME: "posgw.cmd.session.poll"
     SERVICE_BUS_SESSION_EXPIRE_QUEUE_NAME: "posgw.cmd.session.expire"
     SERVICE_BUS_SYSTEM_TELEMETRY_TOPIC_NAME: "posgw.evt.sys.telemetry"
+    REDIS_PORT: "6380"
+    REDIS_SSL_ENABLED: "true"
+    REDIS_TIMEOUT: "2000ms"
+    REDIS_CONNECTION_TIMEOUT: "2000ms"
+    PAYMENT_SESSION_REDIS_TTL_SECONDS: "1800"
     MONGO_HOST: "pagopa-d-itn-posgw-cosmos-account.mongo.cosmos.azure.com"
     MONGO_USERNAME: "pagopa-d-itn-posgw-cosmos-account"
     MONGO_PORT: "10255"
@@ -109,6 +114,8 @@ microservice-chart:
     SERVICE_BUS_SESSION_POLL_CONNECTION_STRING: "posgw-d-posgw-th-session-poll-primary-connection-string"
     SERVICE_BUS_SESSION_EXPIRE_CONNECTION_STRING: "posgw-d-posgw-th-session-expire-primary-connection-string"
     SERVICE_BUS_SYSTEM_TELEMETRY_CONNECTION_STRING: "posgw-d-posgw-th-telemetry-tx-primary-connection-string"
+    REDIS_HOST: redis-posgw-hostname
+    REDIS_PASSWORD: redis-posgw-access-key
   keyvault:
     name: "pagopa-d-itn-posgw-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
