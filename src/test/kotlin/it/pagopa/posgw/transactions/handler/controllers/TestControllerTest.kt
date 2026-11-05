@@ -3,6 +3,8 @@ package it.pagopa.posgw.transactions.handler.controllers
 import it.pagopa.posgw.common.documents.BaseSessionEvent
 import it.pagopa.posgw.common.documents.v1.sessions.SessionView
 import it.pagopa.posgw.common.documents.v1.sessions.data.SessionInitializedData
+import it.pagopa.posgw.common.repositories.redis.v1.PaymentSessionTemplateWrapper
+import it.pagopa.posgw.transactions.handler.queues.publisher.*
 import it.pagopa.posgw.transactions.handler.repositories.SessionsEventStoreRepository
 import it.pagopa.posgw.transactions.handler.repositories.SessionsViewRepository
 import java.util.UUID
@@ -18,7 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class MongoDebugControllerTest {
+class TestControllerTest {
 
     @Suppress("UNCHECKED_CAST")
     private val eventStoreRepository =
@@ -59,14 +61,23 @@ class MongoDebugControllerTest {
             Mono.justOrEmpty(savedViews.find { it.id == invocation.getArgument(0) })
         }
 
-        webTestClient =
-            WebTestClient.bindToRouterFunction(
-                    MongoDebugController(eventStoreRepository, viewRepository).mongoDebugRouter())
-                .build()
+        val controller =
+            TestController(
+                mock(EcommerceSyncPublisher::class.java),
+                mock(EcommerceSyncRetryPublisher::class.java),
+                mock(GecSyncPublisher::class.java),
+                mock(GecSyncRetryPublisher::class.java),
+                mock(SessionExpirePublisher::class.java),
+                mock(SessionPollPublisher::class.java),
+                mock(SystemTelemetryPublisher::class.java),
+                mock(PaymentSessionTemplateWrapper::class.java),
+                eventStoreRepository,
+                viewRepository)
+        webTestClient = WebTestClient.bindToRouterFunction(controller.router()).build()
     }
 
     @Test
-    fun `POST writes an event and a view and reads them back`() {
+    fun `debug mongo POST writes an event and a view and reads them back`() {
         webTestClient
             .post()
             .uri("/debug/mongo")
@@ -95,7 +106,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `POST returns the error when a write fails`() {
+    fun `debug mongo POST returns the error when a write fails`() {
         doReturn(Mono.error<Any>(IllegalStateException("mapping failed")))
             .`when`(eventStoreRepository)
             .save(any<BaseSessionEvent<SessionInitializedData>>())
@@ -113,7 +124,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `POST returns the root cause when the mapping fails before the write starts`() {
+    fun `debug mongo POST returns the root cause when the mapping fails before the write starts`() {
         doThrow(
                 IllegalStateException(
                     "cannot create entity", IllegalArgumentException("ambiguous mapping")))
@@ -133,7 +144,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `GET reads back a session written by POST`() {
+    fun `debug mongo GET reads back a session written by POST`() {
         webTestClient.post().uri("/debug/mongo").exchange().expectStatus().isOk
         val event = savedEvents.single()
 
@@ -153,7 +164,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `GET returns no events and an empty view for an unknown session`() {
+    fun `debug mongo GET returns no events and an empty view for an unknown session`() {
         webTestClient
             .get()
             .uri("/debug/mongo/${UUID.randomUUID()}")
@@ -168,7 +179,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `GET rejects a session id that is not a UUID`() {
+    fun `debug mongo GET rejects a session id that is not a UUID`() {
         webTestClient
             .get()
             .uri("/debug/mongo/not-a-uuid")
@@ -181,7 +192,7 @@ class MongoDebugControllerTest {
     }
 
     @Test
-    fun `GET returns the error when a read fails`() {
+    fun `debug mongo GET returns the error when a read fails`() {
         `when`(viewRepository.findById(anyString()))
             .thenReturn(Mono.error(IllegalStateException("read failed")))
 
