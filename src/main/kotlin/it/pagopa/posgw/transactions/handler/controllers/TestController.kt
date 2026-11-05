@@ -1,13 +1,21 @@
 package it.pagopa.posgw.transactions.handler.controllers
 
+import it.pagopa.posgw.common.documents.BaseSessionEvent
+import it.pagopa.posgw.common.documents.v1.sessions.SessionView
+import it.pagopa.posgw.common.documents.v1.sessions.data.Psp
+import it.pagopa.posgw.common.documents.v1.sessions.data.SessionInitializedData
+import it.pagopa.posgw.common.documents.v1.sessions.events.SessionInitializedEvent
 import it.pagopa.posgw.common.repositories.redis.v1.PaymentSession
 import it.pagopa.posgw.common.repositories.redis.v1.PaymentSessionTemplateWrapper
 import it.pagopa.posgw.transactions.handler.queues.publisher.*
+import it.pagopa.posgw.transactions.handler.repositories.SessionsEventStoreRepository
+import it.pagopa.posgw.transactions.handler.repositories.SessionsViewRepository
 import java.time.Instant
 import java.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
+import org.springframework.core.NestedExceptionUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.bind.annotation.RestController
@@ -29,7 +37,9 @@ class TestController(
     val sessionExpirePublisher: SessionExpirePublisher,
     val sessionPollPublisher: SessionPollPublisher,
     val systemTelemetryPublisher: SystemTelemetryPublisher,
-    val paymentSessionTemplateWrapper: PaymentSessionTemplateWrapper
+    val paymentSessionTemplateWrapper: PaymentSessionTemplateWrapper,
+    val eventStoreRepository: SessionsEventStoreRepository<SessionInitializedData>,
+    val viewRepository: SessionsViewRepository
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -41,6 +51,10 @@ class TestController(
             path("/sessions").nest {
                 GET("/{sessionId}").invoke(getSession)
                 POST("").invoke(postSession)
+            }
+            path("/debug/mongo").nest {
+                GET("/{sessionId}").invoke(getMongoSession)
+                POST("").invoke(postMongoSession)
             }
         }
     }
@@ -138,4 +152,87 @@ class TestController(
                     .bodyValue(it.message.toString())
             }
     }
+
+    // writes an event and its view to MongoDB, then reads both back
+    val postMongoSession: (ServerRequest) -> Mono<ServerResponse> = { _ ->
+        val sessionId = UUID.randomUUID()
+        val correlationId = UUID.randomUUID().toString()
+        val event =
+            SessionInitializedEvent(
+                sessionId,
+                SessionInitializedData(
+                    Psp("debug-psp", "debug-broker", "debug-channel"),
+                    SessionInitializedData.CreditorInstitution(
+                        "00000000000", "debug-office", "debug-workstation"),
+                    listOf("debug-terminal"),
+                    correlationId))
+        val now = Instant.now()
+        val view =
+            SessionView(
+                id = sessionId.toString(),
+                correlationId = correlationId,
+                status = "INITIALIZED",
+                createdAt = now,
+                updatedAt = now,
+                events = listOf(event))
+
+        // deferred: the template maps the entity when save is called, so mapping errors are thrown
+        // before any Mono exists
+        Mono.defer { eventStoreRepository.save(event) }
+            .flatMap { viewRepository.save(view) }
+            .flatMap {
+                eventStoreRepository.findById(event.id).map { it == event }.defaultIfEmpty(false)
+            }
+            .flatMap { readBack ->
+                readMongoSession(sessionId).map { it + ("eventReadBack" to readBack) }
+            }
+            .flatMap { ServerResponse.ok().bodyValue(it) }
+            .onErrorResume(::mongoErrorResponse)
+    }
+
+    val getMongoSession: (ServerRequest) -> Mono<ServerResponse> = { req ->
+        val sessionId = runCatching { UUID.fromString(req.pathVariable("sessionId")) }.getOrNull()
+        if (sessionId == null) {
+            ServerResponse.badRequest().bodyValue(mapOf("result" to "Invalid session id"))
+        } else {
+            Mono.defer { readMongoSession(sessionId) }
+                .flatMap { ServerResponse.ok().bodyValue(it) }
+                .onErrorResume(::mongoErrorResponse)
+        }
+    }
+
+    private fun readMongoSession(sessionId: UUID): Mono<Map<String, Any?>> =
+        eventStoreRepository
+            .findBySessionIdOrderByTimestampAsc(sessionId)
+            .map { it.summary() }
+            .collectList()
+            .zipWith(
+                viewRepository
+                    .findById(sessionId.toString())
+                    .map<Map<String, Any?>> { view ->
+                        mapOf(
+                            "id" to view.id,
+                            "status" to view.status,
+                            "events" to view.events.map { it.summary() })
+                    }
+                    // not mapOf(): Kotlin's EmptyMap can't be serialized by Jackson in native
+                    .defaultIfEmpty(mutableMapOf()))
+            .map { mapOf("sessionId" to sessionId.toString(), "events" to it.t1, "view" to it.t2) }
+
+    // the concrete type shows whether the polymorphic read restored the right event class
+    private fun BaseSessionEvent<*>.summary(): Map<String, Any?> =
+        mapOf(
+            "id" to id,
+            "type" to javaClass.simpleName,
+            "eventCode" to eventCode,
+            "timestamp" to timestamp.toString())
+
+    // the root cause carries the actual problem (e.g. the mapping error behind "Cannot create
+    // PersistentEntity")
+    private fun mongoErrorResponse(error: Throwable): Mono<ServerResponse> =
+        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .bodyValue(
+                mapOf(
+                    "result" to
+                        "Mongo debug operation failed: ${NestedExceptionUtils.getMostSpecificCause(error)}"))
 }
