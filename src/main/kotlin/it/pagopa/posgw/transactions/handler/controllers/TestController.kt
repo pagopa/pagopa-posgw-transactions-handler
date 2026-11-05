@@ -215,7 +215,8 @@ class TestController(
                             "status" to view.status,
                             "events" to view.events.map { it.summary() })
                     }
-                    .defaultIfEmpty(mapOf()))
+                    // not mapOf(): Kotlin's EmptyMap can't be serialized by Jackson in native
+                    .defaultIfEmpty(mutableMapOf()))
             .map { mapOf("sessionId" to sessionId.toString(), "events" to it.t1, "view" to it.t2) }
 
     // the concrete type shows whether the polymorphic read restored the right event class
