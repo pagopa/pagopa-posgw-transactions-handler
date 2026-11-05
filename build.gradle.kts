@@ -15,7 +15,7 @@ plugins {
 
 group = "it.pagopa"
 
-version = "0.2.0"
+version = "0.3.0"
 
 apply(plugin = "com.dipien.semantic-version")
 
@@ -62,6 +62,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
   implementation("com.azure.spring:spring-cloud-azure-starter-servicebus")
+  implementation("org.springframework.boot:spring-boot-starter-data-redis")
   implementation("com.azure:azure-messaging-servicebus:7.18.1")
   implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
